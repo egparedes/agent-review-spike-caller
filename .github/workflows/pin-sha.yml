@@ -10,5 +10,7 @@ jobs:
     uses: egparedes/agent-review-spike-central/.github/workflows/called-probe.yml@49b7f58507811ce73bde73d4667487c2bddee04a # v0.1.0
     permissions:
       contents: read
+      pull-requests: write
+      id-token: write
     with:
       variant: pin-sha
