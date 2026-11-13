@@ -1,0 +1,14 @@
+name: Pin by tag
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  tag:
+    uses: egparedes/agent-review-spike-central/.github/workflows/called-probe.yml@v0.1.0
+    permissions:
+      contents: read
+    with:
+      variant: pin-tag

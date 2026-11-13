@@ -1,0 +1,19 @@
+name: Permissions too narrow
+
+# Throwaway spike: the caller grants less than a called job requests
+# ('write' asks for pull-requests: write).
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  narrow:
+    uses: egparedes/agent-review-spike-central/.github/workflows/called-probe.yml@49b7f58507811ce73bde73d4667487c2bddee04a
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      variant: too-narrow
+      pr: ${{ vars.SPIKE_PR }}
+      write_job: true

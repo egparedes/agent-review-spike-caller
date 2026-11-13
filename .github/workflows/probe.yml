@@ -1,0 +1,48 @@
+name: Probe
+
+# Throwaway design spike. Calls the central probe in three ways:
+#   by_sha     pinned by full SHA (commit A, not HEAD), explicit secrets
+#   by_tag     pinned by tag v0.1.0 (also commit A), secrets: inherit
+#   by_branch  @main (HEAD, commit B), no secrets
+on:
+  push:
+    branches: [main, 'spike/**']
+  workflow_dispatch:
+  pull_request_target:
+    types: [labeled]
+
+permissions: {}
+
+jobs:
+  by_sha:
+    if: github.event_name != 'pull_request_target' || github.event.label.name == 'probe'
+    uses: egparedes/agent-review-spike-central/.github/workflows/called-probe.yml@49b7f58507811ce73bde73d4667487c2bddee04a
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    with:
+      variant: by_sha
+      pr: ${{ github.event.pull_request.number || vars.SPIKE_PR }}
+      oidc: true
+      write_job: true
+    secrets:
+      inference_api_key: ${{ secrets.AGENT_REVIEW_INFERENCE_API_KEY }}
+      shared_mapped: ${{ secrets.SPIKE_SHARED }}
+
+  by_tag:
+    if: github.event_name != 'pull_request_target' || github.event.label.name == 'probe'
+    uses: egparedes/agent-review-spike-central/.github/workflows/called-probe.yml@v0.1.0
+    permissions:
+      contents: read
+    with:
+      variant: by_tag
+    secrets: inherit
+
+  by_branch:
+    if: github.event_name != 'pull_request_target' || github.event.label.name == 'probe'
+    uses: egparedes/agent-review-spike-central/.github/workflows/called-probe.yml@main
+    permissions:
+      contents: read
+    with:
+      variant: by_branch

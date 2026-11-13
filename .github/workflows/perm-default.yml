@@ -1,0 +1,14 @@
+name: Permissions default
+
+# Throwaway spike: the calling job sets no 'permissions:' (repository default
+# token permissions apply) and a called job asks for pull-requests: write.
+on:
+  workflow_dispatch:
+
+jobs:
+  default:
+    uses: egparedes/agent-review-spike-central/.github/workflows/called-probe.yml@49b7f58507811ce73bde73d4667487c2bddee04a
+    with:
+      variant: default-perms
+      pr: ${{ vars.SPIKE_PR }}
+      write_job: true

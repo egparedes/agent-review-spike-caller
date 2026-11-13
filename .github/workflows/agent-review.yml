@@ -1,0 +1,50 @@
+name: Agent Review
+
+# Caller of the reusable agent review (design spike). Everything that is
+# policy for THIS repository stays here: triggers, token permissions, the
+# label, the inference key's mapping, and the repository-specific prompt
+# configuration. The environment, its branch rule, the secret, the variables
+# and the Actions event policy are repository settings.
+on:
+  pull_request_target:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Pull request number
+        required: true
+        type: string
+      harness:
+        description: Harness; 'default' uses the AGENT_REVIEW_HARNESS variable
+        type: choice
+        default: default
+        options: [default, stub, opencode, pi]
+      dry_run:
+        description: Show the comment in the run summary instead of posting it
+        type: boolean
+        default: false
+
+permissions: {}
+
+concurrency:
+  group: agent-review-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: false
+
+jobs:
+  review:
+    uses: egparedes/agent-review-spike-central/.github/workflows/review.yml@49b7f58507811ce73bde73d4667487c2bddee04a # v0.1.0
+    # The ceiling for every job of the called workflow; 'publish' needs the
+    # write permission, the other jobs drop it.
+    permissions:
+      contents: read
+      pull-requests: write
+    with:
+      harness: ${{ (inputs.harness == '' || inputs.harness == 'default') && vars.AGENT_REVIEW_HARNESS || inputs.harness }}
+      model: ${{ vars.AGENT_REVIEW_MODEL }}
+      pr: ${{ inputs.pr }}
+      dry_run: ${{ inputs.dry_run == true }}
+      rule_files: |
+        AGENTS.md
+      prompt_addendum: .github/agent-review/prompt-addendum.md
+    secrets:
+      inference_api_key: ${{ secrets.AGENT_REVIEW_INFERENCE_API_KEY }}
