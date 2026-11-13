@@ -32,7 +32,7 @@ concurrency:
 
 jobs:
   review:
-    uses: egparedes/agent-review-spike-central/.github/workflows/review.yml@49b7f58507811ce73bde73d4667487c2bddee04a # v0.1.0
+    uses: egparedes/agent-review-spike-central/.github/workflows/review.yml@70910c4f287a076ad43805ba26239686f5801a27 # v0.4.0
     # The ceiling for every job of the called workflow; 'publish' needs the
     # write permission, the other jobs drop it.
     permissions:
