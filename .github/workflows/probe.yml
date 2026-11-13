@@ -1,7 +1,7 @@
 name: Probe
 
 # Throwaway design spike. Calls the central probe in three ways:
-#   by_sha     pinned by full SHA (commit A, not HEAD), explicit secrets
+#   by_sha     pinned by full SHA (commit C, not HEAD), explicit secrets
 #   by_tag     pinned by tag v0.1.0 (also commit A), secrets: inherit
 #   by_branch  @main (HEAD, commit B), no secrets
 on:
@@ -16,7 +16,7 @@ permissions: {}
 jobs:
   by_sha:
     if: github.event_name != 'pull_request_target' || github.event.label.name == 'probe'
-    uses: egparedes/agent-review-spike-central/.github/workflows/called-probe.yml@49b7f58507811ce73bde73d4667487c2bddee04a
+    uses: egparedes/agent-review-spike-central/.github/workflows/called-probe.yml@5b9dde02e48d7d5294c25037491d1668799a3736 # v0.3.0
     permissions:
       contents: read
       pull-requests: write
