@@ -9,7 +9,7 @@ permissions: {}
 
 jobs:
   narrow:
-    uses: egparedes/agent-review-spike-central/.github/workflows/called-probe.yml@49b7f58507811ce73bde73d4667487c2bddee04a
+    uses: egparedes/agent-review-spike-central/.github/workflows/called-probe.yml@70910c4f287a076ad43805ba26239686f5801a27
     permissions:
       contents: read
       pull-requests: read
