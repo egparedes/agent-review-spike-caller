@@ -4,4 +4,7 @@ updates:
     directory: /
     schedule:
       interval: daily
-    # Re-run to see the central pins bumped.
+    # Spike only: no waiting period, to observe a bump of the central pins
+    # right away (the default for this ecosystem was 3 days).
+    cooldown:
+      default-days: 0
