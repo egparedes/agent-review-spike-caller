@@ -1,13 +1,21 @@
 name: Agent Review
 
-# Caller of the reusable agent review (design spike). Everything that is
-# policy for THIS repository stays here: triggers, token permissions, the
-# label, the inference key's mapping, and the repository-specific prompt
-# configuration. The environment, its branch rule, the secret, the variables
-# and the Actions event policy are repository settings.
+# Caller of GridTools/ci-workflows' reusable agent review, in a test repository.
+# Everything that is policy for THIS repository stays here: triggers, token
+# permissions, the label, the inference key's mapping and the prompt
+# configuration. The environment (restricted to main), its secret, the
+# variables and the Actions event policy are repository settings.
 on:
+  # Not 'pull_request': fork PRs get no secrets there. No 'issue_comment'
+  # and no 'synchronize'.
   pull_request_target:
     types: [labeled]
+  # Caller test mode (job 'test'): stub harness, forced dry run.
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/agent-review.yml
+      - .github/agent-review/**
   workflow_dispatch:
     inputs:
       pr:
@@ -26,15 +34,18 @@ on:
 
 permissions: {}
 
+# No cancelling: a run joins its group before the job 'if' is evaluated, so
+# an unrelated label would cancel an in-flight review.
 concurrency:
   group: agent-review-${{ github.event.pull_request.number || inputs.pr }}
   cancel-in-progress: false
 
 jobs:
   review:
-    uses: egparedes/agent-review-spike-central/.github/workflows/review.yml@49b7f58507811ce73bde73d4667487c2bddee04a # v0.1.0
-    # The ceiling for every job of the called workflow; 'publish' needs the
-    # write permission, the other jobs drop it.
+    # Avoids creating runs for unrelated labels.
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'agent-review'
+    uses: GridTools/ci-workflows/.github/workflows/agent-review.yml@a6d4ef72439268af8f61d1adefa9d40bc23f2463 # main, pre-release (v0.1.0 pending)
+    # The ceiling for every job of the called workflow; exactly these two.
     permissions:
       contents: read
       pull-requests: write
@@ -42,9 +53,26 @@ jobs:
       harness: ${{ (inputs.harness == '' || inputs.harness == 'default') && vars.AGENT_REVIEW_HARNESS || inputs.harness }}
       model: ${{ vars.AGENT_REVIEW_MODEL }}
       pr: ${{ inputs.pr }}
-      dry_run: ${{ inputs.dry_run == true }}
+      # TEMPORARY: remove before release checklist item 3.3 (label path: real post).
+      dry_run: ${{ inputs.dry_run == true || github.event_name == 'pull_request_target' }}
       rule_files: |
         AGENTS.md
       prompt_addendum: .github/agent-review/prompt-addendum.md
+      # No 'api_base': the default is the only allowed endpoint.
+    # Explicit mapping, never 'secrets: inherit'.
     secrets:
       inference_api_key: ${{ secrets.AGENT_REVIEW_INFERENCE_API_KEY }}
+
+  test:
+    if: github.event_name == 'pull_request'
+    uses: GridTools/ci-workflows/.github/workflows/agent-review.yml@a6d4ef72439268af8f61d1adefa9d40bc23f2463 # main, pre-release (v0.1.0 pending)
+    permissions:
+      contents: read
+      pull-requests: write
+    with:
+      harness: stub # any other harness is rejected under 'pull_request'
+      pr: ${{ github.event.pull_request.number }}
+      rule_files: |
+        AGENTS.md
+      prompt_addendum: .github/agent-review/prompt-addendum.md
+    # No 'secrets:': the stub runs in the keyless job.
