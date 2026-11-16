@@ -69,7 +69,7 @@ jobs:
       contents: read
       pull-requests: write
     with:
-      harness: stub # any other harness is rejected under 'pull_request'
+      harness: opencode # checklist 3.2: must be rejected in authorize
       pr: ${{ github.event.pull_request.number }}
       rule_files: |
         AGENTS.md
