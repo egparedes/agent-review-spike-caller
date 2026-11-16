@@ -1,0 +1,31 @@
+name: M7 audit run (TEMPORARY)
+
+# TEMPORARY scratch workflow for release validation R4+R6: one keyed pi dry
+# run on PR 7 with AWF's audit and proxy logs uploaded. Dispatch only;
+# removed right after the run.
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: agent-review-7
+  cancel-in-progress: false
+
+jobs:
+  review:
+    uses: GridTools/ci-workflows/.github/workflows/agent-review.yml@fa528bddda7c2c63ded32badd811cbdd9814d62d # main, pre-release (v0.1.0 pending)
+    permissions:
+      contents: read
+      pull-requests: write
+    with:
+      harness: pi
+      model: ${{ vars.AGENT_REVIEW_MODEL }}
+      pr: "7"
+      dry_run: true
+      upload_audit: true
+      rule_files: |
+        AGENTS.md
+      prompt_addendum: .github/agent-review/prompt-addendum.md
+    secrets:
+      inference_api_key: ${{ secrets.AGENT_REVIEW_INFERENCE_API_KEY }}
