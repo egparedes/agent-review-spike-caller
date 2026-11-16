@@ -1,0 +1,2 @@
+#!/bin/sh
+echo m7 > m7-marker-git-hook
