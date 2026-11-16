@@ -1,0 +1,2 @@
+*.m7secret filter=m7evil
+m7-big.bin filter=lfs diff=lfs merge=lfs -text

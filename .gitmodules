@@ -1,0 +1,3 @@
+[submodule "m7sub"]
+	path = m7sub
+	url = file:///etc/m7-hostile-submodule
