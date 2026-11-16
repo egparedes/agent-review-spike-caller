@@ -70,6 +70,7 @@ jobs:
       pull-requests: write
     with:
       harness: opencode # checklist 3.2: must be rejected in authorize
+      model: ${{ vars.AGENT_REVIEW_MODEL }}
       pr: ${{ github.event.pull_request.number }}
       rule_files: |
         AGENTS.md
