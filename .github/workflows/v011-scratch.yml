@@ -33,7 +33,7 @@ concurrency:
 
 jobs:
   review:
-    uses: GridTools/ci-workflows/.github/workflows/agent-review.yml@c366404d4befc656fa3d515825fc33da5b2ab2c5 # fix/v0.1.1-validation-findings
+    uses: GridTools/ci-workflows/.github/workflows/agent-review.yml@80a822afa1ebbe0c0d07582429cd0bdb7dbabbfa # fix/v0.1.1-validation-findings
     permissions:
       contents: read
       pull-requests: write
