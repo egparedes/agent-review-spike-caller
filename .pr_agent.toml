@@ -1,0 +1,11 @@
+# Review policy for PR Agent (read from the default branch).
+
+[config]
+# Name the model that answered, so a fallback answer is visible.
+output_run_details = true
+# Review rules for the prompt, read from the default branch.
+repo_context_files = ["AGENTS.md"]
+
+[pr_reviewer]
+num_max_findings = 3
+require_tests_review = true

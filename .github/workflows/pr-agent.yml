@@ -1,0 +1,35 @@
+name: PR Agent
+
+on:
+  # Not 'pull_request': fork PRs get no secrets there.
+  pull_request_target:
+    types: [opened, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+
+permissions: {}
+
+# Never cancel: runs join the group before the job 'if' is evaluated, so any
+# PR comment would cancel an in-flight review.
+concurrency:
+  group: pr-agent-${{ github.event_name }}-${{ github.event.comment.id || github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  pr-agent:
+    uses: GridTools/ci-workflows/.github/workflows/pr-agent.yml@fa528bddda7c2c63ded32badd811cbdd9814d62d # main, pre-release (v0.1.0 pending)
+    # The ceiling for every job of the called workflow; exactly these three.
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    with:
+      model: ${{ vars.PR_AGENT_MODEL }}
+      fallback_models: ${{ vars.PR_AGENT_FALLBACK_MODELS }}
+      token_budget: ${{ vars.PR_AGENT_TOKEN_BUDGET }}
+      max_output_tokens: ${{ vars.PR_AGENT_MAX_OUTPUT_TOKENS }}
+      ai_timeout: ${{ vars.PR_AGENT_AI_TIMEOUT }}
+      docs_url: https://github.com/egparedes/agent-review-spike-caller/blob/main/docs/pr_agent.md
+    # Explicit mapping, never 'secrets: inherit'.
+    secrets:
+      inference_api_key: ${{ secrets.PR_AGENT_INFERENCE_API_KEY }}
