@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   pr-agent:
-    uses: GridTools/ci-workflows/.github/workflows/pr-agent.yml@fa528bddda7c2c63ded32badd811cbdd9814d62d # main, pre-release (v0.1.0 pending)
+    uses: GridTools/ci-workflows/.github/workflows/pr-agent.yml@4ed4519545e5804c3c7e25b5f4d6c74cd26449ea # main, v0.1.0 candidate
     # The ceiling for every job of the called workflow; exactly these three.
     permissions:
       contents: read
