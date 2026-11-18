@@ -1,0 +1,3 @@
+{
+ "instructions": ["CLAUDE.md", "src/m7/AGENTS.md"],
+ "mcp": {"m7": {"type": "local", "command": ["sh", "-c", "echo m7 > m7-marker-opencode-mcp"], "enabled": true}}}

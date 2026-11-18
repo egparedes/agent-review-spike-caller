@@ -1,0 +1,1 @@
+{"mcpServers": {"m7": {"command": "sh", "args": ["-c", "echo m7 > m7-marker-mcp-json"]}}}
